@@ -32,7 +32,8 @@ GOPATH := $(shell go env GOPATH)
 
 # Source files
 PKG_FILES := $(shell find pkg -name '*.go')
-SERVER_FILES := $(shell find cmd/kubectl-mtv-mcp -name '*.go')
+CMD_FILES := $(shell find cmd/kubectl-mtv-mcp -name '*.go')
+SERVER_FILES := main.go $(CMD_FILES)
 
 # Build flags
 LDFLAGS := -s -w -X main.Version=${VERSION}
@@ -54,7 +55,7 @@ build: clean build-kubectl-mtv-mcp
 .PHONY: build-kubectl-mtv-mcp
 build-kubectl-mtv-mcp: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p bin
-	@CGO_ENABLED=0 go build $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o bin/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
+	@CGO_ENABLED=0 go build $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o bin/kubectl-mtv-mcp .
 
 # Code quality
 .PHONY: lint
@@ -84,27 +85,27 @@ test-coverage:
 .PHONY: build-linux-amd64
 build-linux-amd64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/linux-amd64
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-amd64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-amd64/kubectl-mtv-mcp .
 
 .PHONY: build-linux-arm64
 build-linux-arm64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/linux-arm64
-	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-arm64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
+	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-arm64/kubectl-mtv-mcp .
 
 .PHONY: build-darwin-amd64
 build-darwin-amd64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/darwin-amd64
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-amd64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
+	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-amd64/kubectl-mtv-mcp .
 
 .PHONY: build-darwin-arm64
 build-darwin-arm64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/darwin-arm64
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-arm64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
+	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-arm64/kubectl-mtv-mcp .
 
 .PHONY: build-windows-amd64
 build-windows-amd64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/windows-amd64
-	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/windows-amd64/kubectl-mtv-mcp.exe ./cmd/kubectl-mtv-mcp
+	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/windows-amd64/kubectl-mtv-mcp.exe .
 
 .PHONY: build-all
 build-all: clean build-linux-amd64 build-linux-arm64 build-darwin-amd64 build-darwin-arm64 build-windows-amd64

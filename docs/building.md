@@ -20,8 +20,8 @@ cd kubectl-mtv-mcp
 # Build the server
 make build
 
-# The binary will be in the current directory
-./kubectl-mtv-mcp --version
+# The binary will be in the bin directory
+./bin/kubectl-mtv-mcp --version
 ```
 
 ## Development Commands
@@ -82,10 +82,10 @@ go test -v ./...
 make run-kubectl-mtv-mcp
 
 # Or run directly
-go run ./cmd/kubectl-mtv-mcp
+go run .
 
 # Run in SSE mode for testing
-go run ./cmd/kubectl-mtv-mcp --sse --host 127.0.0.1 --port 8080
+go run . --sse --host 127.0.0.1 --port 8080
 ```
 
 ### Distribution

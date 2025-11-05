@@ -1,11 +1,11 @@
-package main
+package cmd
 
 import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/yaacov/kubectl-mtv-mcp/cmd/kubectl-mtv-mcp/tools"
 )
 
-func createReadServer() *mcp.Server {
+func CreateReadServer() *mcp.Server {
 	server := mcp.NewServer(&mcp.Implementation{
 		Name:    "kubectl-mtv",
 		Version: "1.0.0",
