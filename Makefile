@@ -112,22 +112,22 @@ build-all: clean build-linux-amd64 build-linux-arm64 build-darwin-amd64 build-da
 # Create release archives
 .PHONY: dist-all
 dist-all: build-all
-	@cd dist/linux-amd64 && tar -czf ../mcp-servers-${VERSION}-linux-amd64.tar.gz * && cd ../..
-	@cd dist/linux-arm64 && tar -czf ../mcp-servers-${VERSION}-linux-arm64.tar.gz * && cd ../..
-	@cd dist/darwin-amd64 && tar -czf ../mcp-servers-${VERSION}-darwin-amd64.tar.gz * && cd ../..
-	@cd dist/darwin-arm64 && tar -czf ../mcp-servers-${VERSION}-darwin-arm64.tar.gz * && cd ../..
-	@cd dist/windows-amd64 && zip -q -r ../mcp-servers-${VERSION}-windows-amd64.zip * && cd ../..
-	@cd dist && sha256sum mcp-servers-${VERSION}-linux-amd64.tar.gz > mcp-servers-${VERSION}-linux-amd64.tar.gz.sha256sum
-	@cd dist && sha256sum mcp-servers-${VERSION}-linux-arm64.tar.gz > mcp-servers-${VERSION}-linux-arm64.tar.gz.sha256sum
-	@cd dist && sha256sum mcp-servers-${VERSION}-darwin-amd64.tar.gz > mcp-servers-${VERSION}-darwin-amd64.tar.gz.sha256sum
-	@cd dist && sha256sum mcp-servers-${VERSION}-darwin-arm64.tar.gz > mcp-servers-${VERSION}-darwin-arm64.tar.gz.sha256sum
-	@cd dist && sha256sum mcp-servers-${VERSION}-windows-amd64.zip > mcp-servers-${VERSION}-windows-amd64.zip.sha256sum
+	@cd dist/linux-amd64 && tar -czf ../kubectl-mtv-mcp-${VERSION}-linux-amd64.tar.gz * && cd ../..
+	@cd dist/linux-arm64 && tar -czf ../kubectl-mtv-mcp-${VERSION}-linux-arm64.tar.gz * && cd ../..
+	@cd dist/darwin-amd64 && tar -czf ../kubectl-mtv-mcp-${VERSION}-darwin-amd64.tar.gz * && cd ../..
+	@cd dist/darwin-arm64 && tar -czf ../kubectl-mtv-mcp-${VERSION}-darwin-arm64.tar.gz * && cd ../..
+	@cd dist/windows-amd64 && zip -q -r ../kubectl-mtv-mcp-${VERSION}-windows-amd64.zip * && cd ../..
+	@cd dist && sha256sum kubectl-mtv-mcp-${VERSION}-linux-amd64.tar.gz > kubectl-mtv-mcp-${VERSION}-linux-amd64.tar.gz.sha256sum
+	@cd dist && sha256sum kubectl-mtv-mcp-${VERSION}-linux-arm64.tar.gz > kubectl-mtv-mcp-${VERSION}-linux-arm64.tar.gz.sha256sum
+	@cd dist && sha256sum kubectl-mtv-mcp-${VERSION}-darwin-amd64.tar.gz > kubectl-mtv-mcp-${VERSION}-darwin-amd64.tar.gz.sha256sum
+	@cd dist && sha256sum kubectl-mtv-mcp-${VERSION}-darwin-arm64.tar.gz > kubectl-mtv-mcp-${VERSION}-darwin-arm64.tar.gz.sha256sum
+	@cd dist && sha256sum kubectl-mtv-mcp-${VERSION}-windows-amd64.zip > kubectl-mtv-mcp-${VERSION}-windows-amd64.zip.sha256sum
 
 .PHONY: dist
 dist: build
 	@mkdir -p dist
-	@tar -czf dist/mcp-servers-${VERSION}-${GOOS}-${GOARCH}.tar.gz -C bin .
-	@cd dist && sha256sum mcp-servers-${VERSION}-${GOOS}-${GOARCH}.tar.gz > mcp-servers-${VERSION}-${GOOS}-${GOARCH}.tar.gz.sha256sum && cd ..
+	@tar -czf dist/kubectl-mtv-mcp-${VERSION}-${GOOS}-${GOARCH}.tar.gz -C bin .
+	@cd dist && sha256sum kubectl-mtv-mcp-${VERSION}-${GOOS}-${GOARCH}.tar.gz > kubectl-mtv-mcp-${VERSION}-${GOOS}-${GOARCH}.tar.gz.sha256sum && cd ..
 
 # Installation
 .PHONY: install

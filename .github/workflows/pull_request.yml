@@ -1,0 +1,30 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-kubectl-mtv-mcp:
+    name: Test kubectl-mtv-mcp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+
+      - name: Install tools
+        run: make install-tools
+
+      - name: Run tests
+        run: make test
+
+      - name: Run lint
+        run: make lint
+
+      - name: Build kubectl-mtv-mcp
+        run: make
