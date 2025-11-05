@@ -1,63 +1,18 @@
-# kubectl-mtv MCP Servers
+# kubectl-mtv MCP Server
 
-Model Context Protocol (MCP) servers that provide AI assistants with tools to interact with Migration Toolkit for Virtualization (MTV) and KubeVirt through kubectl-mtv and virtctl commands.
+Model Context Protocol (MCP) server that provides AI assistants with comprehensive tools to interact with Migration Toolkit for Virtualization (MTV) through kubectl-mtv commands.
 
 ## What it does
 
-These MCP servers enable AI assistants to help with MTV and KubeVirt operations by providing:
+This MCP server enables AI assistants to help with MTV operations by providing:
 
-- **kubectl-mtv-mcp**: Safe operations for monitoring, troubleshooting, and discovering MTV resources and provider inventories
-- **kubectl-mtv-write-mcp**: **USE WITH CAUTION** - Full lifecycle management including creating, modifying, and deleting MTV resources
-- **virtctl-mcp**: Comprehensive virtual machine management through virtctl commands including VM lifecycle, diagnostics, and cluster resource discovery
-
-## Key Features
-
-These MCP servers offer:
-
-- **Single binary deployment** - Self-contained executables with no runtime dependencies
-- **Smaller footprint** - Optimized binaries (~5MB each)
-- **Better performance** - Native compilation and efficient resource usage
-- **Easy distribution** - Static binaries for multiple platforms
-- **Consistent tooling** - Seamlessly integrates with kubectl-mtv
+- **Read operations**: Safe operations for monitoring, troubleshooting, and discovering MTV resources and provider inventories
+- **Write operations**: **USE WITH CAUTION** - Full lifecycle management including creating, modifying, and deleting MTV resources
 
 ## Prerequisites
 
 - `kubectl-mtv` binary installed and available in PATH (for MTV operations)
-- `virtctl` binary installed and available in PATH (for KubeVirt operations)  
-- Access to a Kubernetes cluster with MTV and/or KubeVirt deployed
-
-## Quick Installation
-
-### Option A: Download Pre-built Binaries (Recommended)
-
-```bash
-# Download for your platform
-# Linux AMD64
-curl -LO https://github.com/yaacov/kubectl-mtv/releases/latest/download/mcp-servers-v0.0.1-linux-amd64.tar.gz
-
-# macOS Apple Silicon
-curl -LO https://github.com/yaacov/kubectl-mtv/releases/latest/download/mcp-servers-v0.0.1-darwin-arm64.tar.gz
-
-# macOS Intel
-curl -LO https://github.com/yaacov/kubectl-mtv/releases/latest/download/mcp-servers-v0.0.1-darwin-amd64.tar.gz
-
-# Extract and install
-tar -xzf mcp-servers-*.tar.gz
-mkdir -p ~/.local/bin
-mv kubectl-mtv-mcp kubectl-mtv-write-mcp virtctl-mcp ~/.local/bin/
-```
-
-### Option B: Build from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/yaacov/kubectl-mtv.git
-cd kubectl-mtv/mcp-go
-
-# Build and install
-make build
-make install
-```
+- Access to a Kubernetes cluster with MTV deployed
 
 ## Setup & Usage
 
@@ -66,21 +21,17 @@ For detailed setup instructions with MCP clients like Cursor and Claude Desktop,
 ### Quick Start with Claude Code
 
 ```bash
-# kubectl-mtv-mcp: read-only operations (recommended for most users)
-claude mcp add kubectl-mtv-read kubectl-mtv-mcp
-
-# kubectl-mtv-write-mcp: USE WITH CAUTION - can modify/delete resources
-claude mcp add kubectl-mtv-write kubectl-mtv-write-mcp
-
-# virtctl-mcp: KubeVirt VM management
-claude mcp add kubevirt virtctl-mcp
+# Add the kubectl-mtv MCP server (includes both read and write operations)
+claude mcp add kubectl-mtv kubectl-mtv-mcp
 ```
 
-## Servers Overview
+## Server Overview
 
-### kubectl-mtv-mcp (6 tools)
+### kubectl-mtv-mcp (19 tools)
 
-**Safe for all users** - Read-only operations:
+Comprehensive MTV operations including both read and write capabilities:
+
+#### Read Operations (Safe for all users)
 
 | Tool | Description |
 |------|-------------|
@@ -91,9 +42,7 @@ claude mcp add kubevirt virtctl-mcp
 | `GetVersion` | Get kubectl-mtv and MTV operator version information |
 | `GetPlanVms` | Get VMs and their status from migration plans |
 
-### kubectl-mtv-write-mcp (13 tools)
-
-**USE WITH CAUTION** - Can modify/delete resources:
+#### Write Operations (USE WITH CAUTION)
 
 | Tool | Description |
 |------|-------------|
@@ -111,16 +60,6 @@ claude mcp add kubevirt virtctl-mcp
 | `PatchPlan` | Patch/modify migration plans |
 | `PatchPlanVm` | Patch VM-specific fields in plans |
 
-### virtctl-mcp (3 tools)
-
-Virtual machine management:
-
-| Tool | Description |
-|------|-------------|
-| `virtctl_vm_lifecycle` | VM power state management (start, stop, restart, pause, migrate) |
-| `virtctl_diagnostics` | VM diagnostics (guest OS info, filesystems, users) |
-| `virtctl_cluster_resources` | Discover available resources (instancetypes, preferences, datasources) |
-
 ## Building
 
 ### Quick Build
@@ -129,10 +68,8 @@ Virtual machine management:
 # Build all servers for current platform
 make build
 
-# Build individual servers
+# Build individual server
 make build-kubectl-mtv-mcp
-make build-kubectl-mtv-write-mcp
-make build-virtctl-mcp
 ```
 
 ### Multi-Architecture Builds
@@ -180,10 +117,8 @@ make dist
 ### Running Locally
 
 ```bash
-# Run individual servers
-make run-kubectl-mtv-mcp          # Start kubectl-mtv-mcp (read-server)
-make run-kubectl-mtv-write-mcp    # Start kubectl-mtv-write-mcp (write-server)
-make run-virtctl-mcp              # Start virtctl-mcp (virtctl-server)
+# Run server
+make run-kubectl-mtv-mcp
 ```
 
 ### Testing
@@ -228,16 +163,8 @@ Add to your Cursor settings:
 ```json
 {
   "mcpServers": {
-    "kubectl-mtv-read": {
+    "kubectl-mtv": {
       "command": "kubectl-mtv-mcp",
-      "args": []
-    },
-    "kubectl-mtv-write": {
-      "command": "kubectl-mtv-write-mcp",
-      "args": []
-    },
-    "kubevirt": {
-      "command": "virtctl-mcp",
       "args": []
     }
   }
@@ -251,16 +178,8 @@ Edit `~/.config/claude/claude_desktop_config.json` (Linux) or `~/Library/Applica
 ```json
 {
   "mcpServers": {
-    "kubectl-mtv-read": {
+    "kubectl-mtv": {
       "command": "kubectl-mtv-mcp",
-      "args": []
-    },
-    "kubectl-mtv-write": {
-      "command": "kubectl-mtv-write-mcp",
-      "args": []
-    },
-    "kubevirt": {
-      "command": "virtctl-mcp",
       "args": []
     }
   }
@@ -271,9 +190,9 @@ See [MCP_SETUP.md](MCP_SETUP.md) for complete configuration instructions.
 
 ## Security Considerations
 
-- The MCP servers execute kubectl-mtv and virtctl commands with your current Kubernetes permissions
-- **kubectl-mtv-mcp**: Safe to use - only performs read operations
-- **kubectl-mtv-write-mcp**: **USE WITH CAUTION** - can create, modify, and delete resources
+- The MCP server executes kubectl-mtv commands with your current Kubernetes permissions
+- **Read operations**: Safe to use - only performs read operations
+- **Write operations**: **USE WITH CAUTION** - can create, modify, and delete resources
 - Ensure your MCP client is running in a secure environment
 - Consider using dedicated service accounts for production environments
 - By default, servers use stdio transport (no network exposure).
@@ -296,11 +215,11 @@ Pre-built binaries available for:
 
 ```bash
 # If binaries are in PATH, find their locations
-which kubectl-mtv-mcp kubectl-mtv-write-mcp virtctl-mcp
+which kubectl-mtv-mcp
 
 # Check common installation locations
-ls -l ~/.local/bin/kubectl-mtv-* ~/.local/bin/virtctl-mcp
-ls -l /usr/local/bin/kubectl-mtv-* /usr/local/bin/virtctl-mcp
+ls -l ~/.local/bin/kubectl-mtv-mcp
+ls -l /usr/local/bin/kubectl-mtv-mcp
 
 # Search your system for the binaries
 find ~ -name "kubectl-mtv-mcp" -type f 2>/dev/null
@@ -316,8 +235,6 @@ export PATH="$HOME/.local/bin:$PATH"
 ```bash
 # Make binaries executable
 chmod +x ~/.local/bin/kubectl-mtv-mcp
-chmod +x ~/.local/bin/kubectl-mtv-write-mcp
-chmod +x ~/.local/bin/virtctl-mcp
 ```
 
 ### Testing Server Connectivity

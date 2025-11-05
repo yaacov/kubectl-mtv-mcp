@@ -1,4 +1,4 @@
-module github.com/yaacov/kubectl-mtv/mcp-go
+module github.com/yaacov/kubectl-mtv-mcp
 
 go 1.23.0
 

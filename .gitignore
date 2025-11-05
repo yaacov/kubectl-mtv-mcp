@@ -15,5 +15,13 @@ bin/
 go.work
 
 # Dependency directories
-vendor/
+bin/
+dist/
+coverage.out
+.idea/
+.vscode/
+.cursor/
+.cursorrules
+.cursorignore
+.cursorignorerules
 

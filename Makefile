@@ -32,9 +32,7 @@ GOPATH := $(shell go env GOPATH)
 
 # Source files
 PKG_FILES := $(shell find pkg -name '*.go')
-READ_SERVER_FILES := $(shell find cmd/read-server -name '*.go')
-WRITE_SERVER_FILES := $(shell find cmd/write-server -name '*.go')
-VIRTCTL_SERVER_FILES := $(shell find cmd/virtctl-server -name '*.go')
+SERVER_FILES := $(shell find cmd/kubectl-mtv-mcp -name '*.go')
 
 # Build flags
 LDFLAGS := -s -w -X main.Version=${VERSION}
@@ -50,23 +48,13 @@ install-tools:
 
 # Build all servers for current platform
 .PHONY: build
-build: clean build-kubectl-mtv-mcp build-kubectl-mtv-write-mcp build-virtctl-mcp
+build: clean build-kubectl-mtv-mcp
 
 # Individual server builds
 .PHONY: build-kubectl-mtv-mcp
-build-kubectl-mtv-mcp: $(PKG_FILES) $(READ_SERVER_FILES)
+build-kubectl-mtv-mcp: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p bin
-	@CGO_ENABLED=0 go build $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o bin/kubectl-mtv-mcp ./cmd/read-server
-
-.PHONY: build-kubectl-mtv-write-mcp
-build-kubectl-mtv-write-mcp: $(PKG_FILES) $(WRITE_SERVER_FILES)
-	@mkdir -p bin
-	@CGO_ENABLED=0 go build $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o bin/kubectl-mtv-write-mcp ./cmd/write-server
-
-.PHONY: build-virtctl-mcp
-build-virtctl-mcp: $(PKG_FILES) $(VIRTCTL_SERVER_FILES)
-	@mkdir -p bin
-	@CGO_ENABLED=0 go build $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o bin/virtctl-mcp ./cmd/virtctl-server
+	@CGO_ENABLED=0 go build $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o bin/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
 
 # Code quality
 .PHONY: lint
@@ -94,39 +82,29 @@ test-coverage:
 
 # Multi-architecture builds
 .PHONY: build-linux-amd64
-build-linux-amd64: $(PKG_FILES) $(READ_SERVER_FILES) $(WRITE_SERVER_FILES) $(VIRTCTL_SERVER_FILES)
+build-linux-amd64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/linux-amd64
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-amd64/kubectl-mtv-mcp ./cmd/read-server
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-amd64/kubectl-mtv-write-mcp ./cmd/write-server
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-amd64/virtctl-mcp ./cmd/virtctl-server
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-amd64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
 
 .PHONY: build-linux-arm64
-build-linux-arm64: $(PKG_FILES) $(READ_SERVER_FILES) $(WRITE_SERVER_FILES) $(VIRTCTL_SERVER_FILES)
+build-linux-arm64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/linux-arm64
-	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-arm64/kubectl-mtv-mcp ./cmd/read-server
-	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-arm64/kubectl-mtv-write-mcp ./cmd/write-server
-	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-arm64/virtctl-mcp ./cmd/virtctl-server
+	@CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/linux-arm64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
 
 .PHONY: build-darwin-amd64
-build-darwin-amd64: $(PKG_FILES) $(READ_SERVER_FILES) $(WRITE_SERVER_FILES) $(VIRTCTL_SERVER_FILES)
+build-darwin-amd64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/darwin-amd64
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-amd64/kubectl-mtv-mcp ./cmd/read-server
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-amd64/kubectl-mtv-write-mcp ./cmd/write-server
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-amd64/virtctl-mcp ./cmd/virtctl-server
+	@CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-amd64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
 
 .PHONY: build-darwin-arm64
-build-darwin-arm64: $(PKG_FILES) $(READ_SERVER_FILES) $(WRITE_SERVER_FILES) $(VIRTCTL_SERVER_FILES)
+build-darwin-arm64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/darwin-arm64
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-arm64/kubectl-mtv-mcp ./cmd/read-server
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-arm64/kubectl-mtv-write-mcp ./cmd/write-server
-	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-arm64/virtctl-mcp ./cmd/virtctl-server
+	@CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/darwin-arm64/kubectl-mtv-mcp ./cmd/kubectl-mtv-mcp
 
 .PHONY: build-windows-amd64
-build-windows-amd64: $(PKG_FILES) $(READ_SERVER_FILES) $(WRITE_SERVER_FILES) $(VIRTCTL_SERVER_FILES)
+build-windows-amd64: $(PKG_FILES) $(SERVER_FILES)
 	@mkdir -p dist/windows-amd64
-	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/windows-amd64/kubectl-mtv-mcp.exe ./cmd/read-server
-	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/windows-amd64/kubectl-mtv-write-mcp.exe ./cmd/write-server
-	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/windows-amd64/virtctl-mcp.exe ./cmd/virtctl-server
+	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -a $(BUILD_FLAGS) -ldflags='$(LDFLAGS)' -o dist/windows-amd64/kubectl-mtv-mcp.exe ./cmd/kubectl-mtv-mcp
 
 .PHONY: build-all
 build-all: clean build-linux-amd64 build-linux-arm64 build-darwin-amd64 build-darwin-arm64 build-windows-amd64
@@ -155,21 +133,11 @@ dist: build
 .PHONY: install
 install: build
 	@cp bin/kubectl-mtv-mcp $(GOPATH)/bin/
-	@cp bin/kubectl-mtv-write-mcp $(GOPATH)/bin/
-	@cp bin/virtctl-mcp $(GOPATH)/bin/
 
 # Run servers
 .PHONY: run-kubectl-mtv-mcp
 run-kubectl-mtv-mcp: build-kubectl-mtv-mcp
 	@./bin/kubectl-mtv-mcp
-
-.PHONY: run-kubectl-mtv-write-mcp
-run-kubectl-mtv-write-mcp: build-kubectl-mtv-write-mcp
-	@./bin/kubectl-mtv-write-mcp
-
-.PHONY: run-virtctl-mcp
-run-virtctl-mcp: build-virtctl-mcp
-	@./bin/virtctl-mcp
 
 # Cleanup
 .PHONY: clean
