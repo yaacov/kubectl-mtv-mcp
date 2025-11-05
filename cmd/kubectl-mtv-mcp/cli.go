@@ -11,6 +11,9 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
+// Version is set via linker flags during build
+var Version = "dev"
+
 func Execute() error {
 	version := flag.Bool("version", false, "Print version information and exit")
 	help := flag.Bool("help", false, "Print help information and exit")
@@ -36,7 +39,7 @@ func Execute() error {
 
 	if *version {
 		fmt.Println("kubectl-mtv MCP Server")
-		fmt.Println("Version: 1.0.0")
+		fmt.Printf("Version: %s\n", Version)
 		return nil
 	}
 

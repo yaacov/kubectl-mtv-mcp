@@ -8,7 +8,7 @@ import (
 func CreateReadServer() *mcp.Server {
 	server := mcp.NewServer(&mcp.Implementation{
 		Name:    "kubectl-mtv",
-		Version: "1.0.0",
+		Version: Version,
 	}, nil)
 
 	// Register read-only tools

@@ -36,7 +36,7 @@ CMD_FILES := $(shell find cmd/kubectl-mtv-mcp -name '*.go')
 SERVER_FILES := main.go $(CMD_FILES)
 
 # Build flags
-LDFLAGS := -s -w -X main.Version=${VERSION}
+LDFLAGS := -s -w -X github.com/yaacov/kubectl-mtv-mcp/cmd/kubectl-mtv-mcp.Version=${VERSION}
 BUILD_FLAGS := -trimpath
 
 .PHONY: all
