@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-func execute() error {
+func Execute() error {
 	version := flag.Bool("version", false, "Print version information and exit")
 	help := flag.Bool("help", false, "Print help information and exit")
 	sse := flag.Bool("sse", false, "Run in SSE (Server-Sent Events) mode over HTTP")
@@ -45,7 +45,7 @@ func execute() error {
 		addr := *host + ":" + *port
 
 		handler := mcp.NewSSEHandler(func(req *http.Request) *mcp.Server {
-			return createReadServer()
+			return CreateReadServer()
 		}, nil)
 
 		log.Printf("Starting kubectl-mtv MCP server in SSE mode on %s", addr)
@@ -55,6 +55,6 @@ func execute() error {
 	}
 
 	// Stdio mode - default behavior
-	server := createReadServer()
+	server := CreateReadServer()
 	return server.Run(context.Background(), &mcp.StdioTransport{})
 }
