@@ -60,7 +60,7 @@ func GetManageMappingTool() *mcp.Tool {
 
     Mapping Pairs Format:
     Network pairs: 'source:target-namespace/target-network' or 'source:target-network'
-    Storage pairs: 'source:storage-class[;volumeMode=Block|Filesystem][;accessMode=ReadWriteOnce|ReadWriteMany|ReadOnlyMany][;offloadPlugin=vsphere][;offloadSecret=secret-name][;offloadVendor=vantara|ontap|primera3par|pureFlashArray|powerflex|powermax]' (comma-separated pairs, semicolon-separated parameters)
+    Storage pairs: 'source:storage-class[;volumeMode=Block|Filesystem][;accessMode=ReadWriteOnce|ReadWriteMany|ReadOnlyMany][;offloadPlugin=vsphere][;offloadSecret=secret-name][;offloadVendor=flashsystem|vantara|ontap|primera3par|pureFlashArray|powerflex|powermax|powerstore|infinibox]' (comma-separated pairs, semicolon-separated parameters)
     Special values: 'source:default' (pod networking), 'source:ignored' (skip network)
     Multiple pairs: comma-separated 'pair1,pair2,pair3'
 
@@ -101,7 +101,7 @@ func GetManageMappingTool() *mcp.Tool {
             • Supported plugins: vsphere
         default_offload_secret: Default offload plugin secret name for storage pairs (optional)
         default_offload_vendor: Default offload plugin vendor for storage pairs (optional)
-            • Supported vendors: vantara, ontap, primera3par, pureFlashArray, powerflex, powermax
+            • Supported vendors: flashsystem, vantara, ontap, primera3par, pureFlashArray, powerflex, powermax, powerstore, infinibox
 
     Returns:
         Command output confirming the mapping operation
@@ -115,7 +115,7 @@ func GetManageMappingTool() *mcp.Tool {
         # Create storage mapping with enhanced features
         ManageMapping(action="create", mapping_type="storage", mapping_name="my-storage-mapping",
                      source_provider="vsphere-provider", target_provider="openshift-provider",
-                     pairs="fast-datastore:ocs-storagecluster-ceph-rbd;volumeMode=Block;accessMode=ReadWriteOnce;offloadPlugin=vsphere;offloadVendor=vantara",
+                     pairs="fast-datastore:ocs-storagecluster-ceph-rbd;volumeMode=Block;accessMode=ReadWriteOnce;offloadPlugin=vsphere;offloadVendor=flashsystem",
                      default_volume_mode="Block")
 
         # Auto-selection will prioritize storage classes with these annotations:
