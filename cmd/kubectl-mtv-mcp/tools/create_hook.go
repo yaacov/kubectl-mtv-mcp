@@ -11,7 +11,7 @@ import (
 // CreateHookInput represents the input for CreateHook
 type CreateHookInput struct {
 	HookName       string `json:"hook_name" jsonschema:"required"`
-	Image          string `json:"image" jsonschema:"required"`
+	Image          string `json:"image,omitempty"`
 	Namespace      string `json:"namespace,omitempty"`
 	ServiceAccount string `json:"service_account,omitempty"`
 	Playbook       string `json:"playbook,omitempty"`
@@ -39,7 +39,7 @@ func GetCreateHookTool() *mcp.Tool {
 
     Args:
         hook_name: Name for the new migration hook (required)
-        image: Container image URL to run (required)
+        image: Container image URL to run (optional, default: quay.io/kubev2v/hook-runner)
         namespace: Kubernetes namespace to create the hook in (optional)
         service_account: Service account to use for the hook (optional)
         playbook: Ansible playbook content or @filename to load from file (optional)
@@ -49,17 +49,17 @@ func GetCreateHookTool() *mcp.Tool {
         Command output confirming hook creation
 
     Examples:
-        # Create basic hook with inline playbook
-        create_hook("pre-migration-check", "my-registry/ansible:latest",
+        # Create hook with default image and inline playbook
+        create_hook("pre-migration-check",
                    playbook="- name: Check connectivity\n  ping:\n    data: test")
 
-        # Create hook with playbook from file
-        create_hook("post-migration-cleanup", "my-registry/ansible:latest",
+        # Create hook with custom image and playbook from file
+        create_hook("post-migration-cleanup", image="my-registry/ansible:latest",
                    playbook="@/path/to/cleanup-playbook.yaml",
                    service_account="migration-hooks", deadline=300)
 
-        # Create simple validation hook
-        create_hook("validate-target", "my-registry/validator:latest",
+        # Create hook with default image and service account
+        create_hook("validate-target",
                    service_account="migration-validator", deadline=600)`,
 	}
 }
@@ -68,7 +68,6 @@ func HandleCreateHook(ctx context.Context, req *mcp.CallToolRequest, input Creat
 	// Validate required parameters
 	if err := mtvmcp.ValidateRequiredParams(map[string]string{
 		"hook_name": input.HookName,
-		"image":     input.Image,
 	}); err != nil {
 		return nil, "", err
 	}
@@ -79,7 +78,9 @@ func HandleCreateHook(ctx context.Context, req *mcp.CallToolRequest, input Creat
 		args = append(args, "-n", input.Namespace)
 	}
 
-	args = append(args, "--image", input.Image)
+	if input.Image != "" {
+		args = append(args, "--image", input.Image)
+	}
 
 	if input.ServiceAccount != "" {
 		args = append(args, "--service-account", input.ServiceAccount)

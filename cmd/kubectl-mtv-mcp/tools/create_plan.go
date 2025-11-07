@@ -52,6 +52,10 @@ type CreatePlanInput struct {
 	DefaultOffloadPlugin           string `json:"default_offload_plugin,omitempty"`
 	DefaultOffloadSecret           string `json:"default_offload_secret,omitempty"`
 	DefaultOffloadVendor           string `json:"default_offload_vendor,omitempty"`
+	RunPreflightInspection         *bool  `json:"run_preflight_inspection,omitempty"`
+	ConvertorLabels                string `json:"convertor_labels,omitempty"`
+	ConvertorNodeSelector          string `json:"convertor_node_selector,omitempty"`
+	ConvertorAffinity              string `json:"convertor_affinity,omitempty"`
 }
 
 // GetCreatePlanTool returns the tool definition
@@ -256,7 +260,7 @@ func GetCreatePlanTool() *mcp.Tool {
             Note: All source networks must be mapped, validation prevents duplicate targets
         storage_pairs: Storage mapping pairs (optional, creates mapping if provided) - enhanced format with optional parameters:
             • Basic: 'source:storage-class' - simple storage class mapping
-            • Enhanced: 'source:storage-class;volumeMode=Block;accessMode=ReadWriteOnce;offloadPlugin=vsphere;offloadSecret=secret;offloadVendor=vantara'
+            • Enhanced: 'source:storage-class;volumeMode=Block;accessMode=ReadWriteOnce;offloadPlugin=vsphere;offloadSecret=secret;offloadVendor=flashsystem'
             • All semicolon-separated parameters are optional: volumeMode, accessMode, offloadPlugin, offloadSecret, offloadVendor
             Note: All source storages must be mapped, auto-selection uses
             storageclass.kubevirt.io/is-default-virt-class > storageclass.kubernetes.io/is-default-class >
@@ -307,7 +311,15 @@ func GetCreatePlanTool() *mcp.Tool {
             • Supported plugins: vsphere
         default_offload_secret: Default offload plugin secret name for storage pairs (optional)
         default_offload_vendor: Default offload plugin vendor for storage pairs (optional)
-            • Supported vendors: vantara, ontap, primera3par, pureFlashArray, powerflex, powermax
+            • Supported vendors: flashsystem, vantara, ontap, primera3par, pureFlashArray, powerflex, powermax, powerstore, infinibox
+        run_preflight_inspection: Run preflight inspection on VM base disks before starting disk transfer (optional, default True, applies only to warm migrations from VMware)
+        convertor_labels: Labels to be added to virt-v2v convertor pods - 'key1=value1,key2=value2' format (optional)
+        convertor_node_selector: Node selector to constrain convertor pod scheduling - 'key1=value1,key2=value2' format (optional)
+        convertor_affinity: Convertor affinity to constrain convertor pod scheduling using KARL syntax (optional)
+            KARL syntax examples for convertor pods:
+            - 'REQUIRE pods(app=storage) on node' - Co-locate convertor with storage pods
+            - 'PREFER pods(tier=compute) on zone' - Prefer same zone as compute pods
+            - 'AVOID pods(workload=heavy) on node' - Separate convertor from heavy workloads
 
     Returns:
         Command output confirming plan creation
@@ -330,7 +342,7 @@ func GetCreatePlanTool() *mcp.Tool {
                    # Network pairs: shows different formats (namespace/name, name-only, default, ignored)
                    network_pairs="VM Network:default,Management:mgmt-ns/mgmt-net,Production:prod-net,DMZ:ignored",
                    # Storage pairs: shows basic and enhanced format with optional parameters
-                   storage_pairs="fast-datastore:premium-ssd,slow-datastore:standard-hdd;volumeMode=Block;accessMode=ReadWriteOnce;offloadPlugin=vsphere;offloadVendor=vantara",
+                   storage_pairs="fast-datastore:premium-ssd,slow-datastore:standard-hdd;volumeMode=Block;accessMode=ReadWriteOnce;offloadPlugin=vsphere;offloadVendor=flashsystem",
                    default_volume_mode="Block",
                    default_target_network="openshift-sriov-network/high-perf-net",
                    transfer_network="sriov-namespace/transfer-network",
@@ -529,6 +541,18 @@ func HandleCreatePlan(ctx context.Context, req *mcp.CallToolRequest, input Creat
 	}
 	if input.InventoryURL != "" {
 		args = append(args, "--inventory-url", input.InventoryURL)
+	}
+
+	// Add new preflight and convertor flags
+	mtvmcp.AddBooleanFlag(&args, "run-preflight-inspection", input.RunPreflightInspection)
+	if input.ConvertorLabels != "" {
+		args = append(args, "--convertor-labels", input.ConvertorLabels)
+	}
+	if input.ConvertorNodeSelector != "" {
+		args = append(args, "--convertor-node-selector", input.ConvertorNodeSelector)
+	}
+	if input.ConvertorAffinity != "" {
+		args = append(args, "--convertor-affinity", input.ConvertorAffinity)
 	}
 
 	result, err := mtvmcp.RunKubectlMTVCommand(args)

@@ -35,6 +35,10 @@ type PatchPlanInput struct {
 	DeleteVMOnFailMigration        *bool  `json:"delete_vm_on_fail_migration,omitempty"`
 	SkipGuestConversion            *bool  `json:"skip_guest_conversion,omitempty"`
 	Warm                           *bool  `json:"warm,omitempty"`
+	RunPreflightInspection         *bool  `json:"run_preflight_inspection,omitempty"`
+	ConvertorLabels                string `json:"convertor_labels,omitempty"`
+	ConvertorNodeSelector          string `json:"convertor_node_selector,omitempty"`
+	ConvertorAffinity              string `json:"convertor_affinity,omitempty"`
 }
 
 // GetPatchPlanTool returns the tool definition
@@ -105,6 +109,10 @@ func GetPatchPlanTool() *mcp.Tool {
         delete_vm_on_fail_migration: Delete target VM when migration fails (optional)
         skip_guest_conversion: Skip guest conversion process (optional)
         warm: Enable warm migration (optional, prefer migration_type parameter)
+        run_preflight_inspection: Run preflight inspection on VM base disks (optional, applies only to warm migrations from VMware)
+        convertor_labels: Labels for virt-v2v convertor pods - 'key1=value1,key2=value2' format (optional)
+        convertor_node_selector: Node selector for convertor pod scheduling - 'key1=value1,key2=value2' format (optional)
+        convertor_affinity: Convertor affinity using KARL syntax - e.g. 'REQUIRE pods(app=storage) on node' (optional)
 
     Returns:
         Command output confirming plan patch
@@ -203,6 +211,18 @@ func HandlePatchPlan(ctx context.Context, req *mcp.CallToolRequest, input PatchP
 	mtvmcp.AddBooleanFlag(&args, "skip-guest-conversion", input.SkipGuestConversion)
 	if input.MigrationType == "" {
 		mtvmcp.AddBooleanFlag(&args, "warm", input.Warm)
+	}
+
+	// Add new preflight and convertor flags
+	mtvmcp.AddBooleanFlag(&args, "run-preflight-inspection", input.RunPreflightInspection)
+	if input.ConvertorLabels != "" {
+		args = append(args, "--convertor-labels", input.ConvertorLabels)
+	}
+	if input.ConvertorNodeSelector != "" {
+		args = append(args, "--convertor-node-selector", input.ConvertorNodeSelector)
+	}
+	if input.ConvertorAffinity != "" {
+		args = append(args, "--convertor-affinity", input.ConvertorAffinity)
 	}
 
 	result, err := mtvmcp.RunKubectlMTVCommand(args)
