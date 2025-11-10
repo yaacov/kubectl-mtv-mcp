@@ -27,6 +27,7 @@ type ManageMappingInput struct {
 	DefaultOffloadPlugin string `json:"default_offload_plugin,omitempty" jsonschema:"Default offload plugin type for storage pairs (optional)"`
 	DefaultOffloadSecret string `json:"default_offload_secret,omitempty" jsonschema:"Default offload plugin secret name for storage pairs (optional)"`
 	DefaultOffloadVendor string `json:"default_offload_vendor,omitempty" jsonschema:"Default offload plugin vendor for storage pairs (optional)"`
+	DryRun               bool   `json:"dry_run,omitempty" jsonschema:"If true, shows commands instead of executing (educational mode)"`
 }
 
 // GetManageMappingTool returns the tool definition
@@ -140,6 +141,11 @@ func GetManageMappingTool() *mcp.Tool {
 }
 
 func HandleManageMapping(ctx context.Context, req *mcp.CallToolRequest, input ManageMappingInput) (*mcp.CallToolResult, any, error) {
+	// Enable dry run mode if requested
+	if input.DryRun {
+		ctx = mtvmcp.WithDryRun(ctx, true)
+	}
+
 	// Validate required parameters
 	if err := mtvmcp.ValidateRequiredParams(map[string]string{
 		"action":       input.Action,
