@@ -211,7 +211,7 @@ func HandleListInventory(ctx context.Context, req *mcp.CallToolRequest, input Li
 		args = append(args, "-o", "json") // Default to json for unsupported formats
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}

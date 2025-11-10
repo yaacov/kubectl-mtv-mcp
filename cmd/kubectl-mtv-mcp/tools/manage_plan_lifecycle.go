@@ -160,7 +160,7 @@ func HandleManagePlanLifecycle(ctx context.Context, req *mcp.CallToolRequest, in
 		}
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}

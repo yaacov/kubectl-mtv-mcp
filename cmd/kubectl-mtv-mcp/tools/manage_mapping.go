@@ -324,7 +324,7 @@ func HandleManageMapping(ctx context.Context, req *mcp.CallToolRequest, input Ma
 		}
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}

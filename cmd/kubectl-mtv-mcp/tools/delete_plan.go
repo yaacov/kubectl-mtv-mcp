@@ -78,7 +78,7 @@ func HandleDeletePlan(ctx context.Context, req *mcp.CallToolRequest, input Delet
 		args = append(args, "--clean-all")
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}

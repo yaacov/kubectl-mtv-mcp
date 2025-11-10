@@ -56,7 +56,7 @@ func HandleDeleteHost(ctx context.Context, req *mcp.CallToolRequest, input Delet
 		args = append(args, "-n", input.Namespace)
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}
