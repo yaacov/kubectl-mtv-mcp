@@ -225,7 +225,7 @@ func HandlePatchPlan(ctx context.Context, req *mcp.CallToolRequest, input PatchP
 		args = append(args, "--convertor-affinity", input.ConvertorAffinity)
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}

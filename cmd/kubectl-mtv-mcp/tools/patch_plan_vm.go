@@ -203,7 +203,7 @@ func HandlePatchPlanVm(ctx context.Context, req *mcp.CallToolRequest, input Patc
 		args = append(args, "--clear-hooks")
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}

@@ -2,6 +2,7 @@ package mtvmcp
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os/exec"
@@ -10,6 +11,28 @@ import (
 
 	shellquote "github.com/kballard/go-shellquote"
 )
+
+// contextKey is a custom type for context keys to avoid collisions
+type contextKey string
+
+const (
+	// kubeconfigTokenKey is the context key for Kubernetes token
+	kubeconfigTokenKey contextKey = "kubeconfig_token"
+)
+
+// WithKubeToken adds a Kubernetes token to the context
+func WithKubeToken(ctx context.Context, token string) context.Context {
+	return context.WithValue(ctx, kubeconfigTokenKey, token)
+}
+
+// GetKubeToken retrieves the Kubernetes token from the context
+func GetKubeToken(ctx context.Context) (string, bool) {
+	if ctx == nil {
+		return "", false
+	}
+	token, ok := ctx.Value(kubeconfigTokenKey).(string)
+	return token, ok
+}
 
 // CommandResponse represents the structured response from command execution
 type CommandResponse struct {
@@ -122,7 +145,17 @@ func ValidateNetworkPairs(pairsStr string) error {
 }
 
 // RunKubectlMTVCommand executes a kubectl-mtv command and returns structured JSON
-func RunKubectlMTVCommand(args []string) (string, error) {
+// It accepts a context which may contain a Kubernetes token for authentication.
+// If a token is present in the context, it will be passed via the --token flag.
+// If no token is present, it falls back to the default kubeconfig behavior.
+func RunKubectlMTVCommand(ctx context.Context, args []string) (string, error) {
+	// Check if we have a token in the context and prepend --token flag
+	if token, ok := GetKubeToken(ctx); ok && token != "" {
+		// Insert --token flag at the beginning of args (after subcommand if present)
+		// This ensures it's processed before any other flags
+		args = append([]string{"--token", token}, args...)
+	}
+
 	cmd := exec.Command("kubectl-mtv", args...)
 
 	var stdout, stderr bytes.Buffer
@@ -165,7 +198,17 @@ func RunKubectlMTVCommand(args []string) (string, error) {
 }
 
 // RunKubectlCommand executes a kubectl command and returns structured JSON
-func RunKubectlCommand(args []string) (string, error) {
+// It accepts a context which may contain a Kubernetes token for authentication.
+// If a token is present in the context, it will be passed via the --token flag.
+// If no token is present, it falls back to the default kubeconfig behavior.
+func RunKubectlCommand(ctx context.Context, args []string) (string, error) {
+	// Check if we have a token in the context and prepend --token flag
+	if token, ok := GetKubeToken(ctx); ok && token != "" {
+		// Insert --token flag at the beginning of args (after subcommand if present)
+		// This ensures it's processed before any other flags
+		args = append([]string{"--token", token}, args...)
+	}
+
 	cmd := exec.Command("kubectl", args...)
 
 	var stdout, stderr bytes.Buffer

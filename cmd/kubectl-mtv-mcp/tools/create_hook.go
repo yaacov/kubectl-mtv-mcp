@@ -92,7 +92,7 @@ func HandleCreateHook(ctx context.Context, req *mcp.CallToolRequest, input Creat
 		args = append(args, "--deadline", fmt.Sprintf("%d", input.Deadline))
 	}
 
-	result, err := mtvmcp.RunKubectlMTVCommand(args)
+	result, err := mtvmcp.RunKubectlMTVCommand(ctx, args)
 	if err != nil {
 		return nil, "", err
 	}
