@@ -26,6 +26,28 @@ make build
 
 ## Development Commands
 
+Run `make help` to see all available targets:
+
+```
+kubectl-mtv-mcp Makefile
+
+Usage: make [target]
+
+Targets:
+  help             Show this help message
+  build            Build the binary for current platform
+  install          Install binary to GOPATH/bin
+  run              Build and run the MCP server
+  test             Run tests with coverage
+  lint             Run linters (go vet + golangci-lint)
+  fmt              Format Go source files
+  tidy             Tidy Go modules
+  verify           Run fmt, lint, and test
+  clean            Remove build artifacts
+  install-tools    Install development tools (golangci-lint)
+  dist             Build release archive for linux-amd64
+```
+
 ### Building
 
 ```bash
@@ -34,16 +56,6 @@ make build
 
 # Install to GOPATH/bin
 make install
-
-# Build for specific platform
-make build-linux-amd64      # Linux AMD64
-make build-linux-arm64      # Linux ARM64
-make build-darwin-amd64     # macOS Intel
-make build-darwin-arm64     # macOS Apple Silicon
-make build-windows-amd64    # Windows AMD64
-
-# Build for all platforms
-make build-all
 ```
 
 ### Code Quality
@@ -58,7 +70,7 @@ make fmt
 # Run linters
 make lint
 
-# Run all checks (format + lint)
+# Run all checks (format + lint + test)
 make verify
 ```
 
@@ -68,9 +80,6 @@ make verify
 # Run tests
 make test
 
-# Run tests with coverage
-make test-coverage
-
 # Run tests with verbose output
 go test -v ./...
 ```
@@ -78,8 +87,8 @@ go test -v ./...
 ### Running Locally
 
 ```bash
-# Run server in stdio mode
-make run-kubectl-mtv-mcp
+# Build and run server in stdio mode
+make run
 
 # Or run directly
 go run .
@@ -88,20 +97,11 @@ go run .
 go run . --sse --host 127.0.0.1 --port 8080
 ```
 
-### Distribution
+### Cleanup
 
 ```bash
-# Create release archives with checksums
-make dist-all
-
-# Create archive for current platform
-make dist
-
 # Clean build artifacts
 make clean
-
-# Deep clean (includes Go cache)
-make clean-all
 ```
 
 ## Testing with MCP Clients
@@ -110,7 +110,6 @@ make clean-all
 
 1. Build and install:
    ```bash
-   make build
    make install
    ```
 
@@ -124,7 +123,6 @@ make clean-all
 
 1. Build and install:
    ```bash
-   make build
    make install
    ```
 
@@ -137,4 +135,3 @@ make clean-all
 ## License
 
 Apache License 2.0 - See LICENSE file for details.
-
