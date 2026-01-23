@@ -1,6 +1,6 @@
 # Installation Guide
 
-Complete installation instructions for kubectl-mtv MCP server across different platforms and MCP clients.
+Complete installation instructions for kubectl-mtv MCP server.
 
 ## Prerequisites
 
@@ -12,13 +12,14 @@ Before installing the MCP server, ensure you have:
 
 ## Installing the Binary
 
-Download the appropriate binary for your platform from the releases page:
+Download the binary from the [releases page](https://github.com/yaacov/kubectl-mtv-mcp/releases) or build from source:
 
-- Linux AMD64: `kubectl-mtv-mcp-linux-amd64.tar.gz`
-- Linux ARM64: `kubectl-mtv-mcp-linux-arm64.tar.gz`
-- macOS Intel: `kubectl-mtv-mcp-darwin-amd64.tar.gz`
-- macOS Apple Silicon: `kubectl-mtv-mcp-darwin-arm64.tar.gz`
-- Windows: `kubectl-mtv-mcp-windows-amd64.zip`
+```bash
+# Build from source
+git clone https://github.com/yaacov/kubectl-mtv-mcp.git
+cd kubectl-mtv-mcp
+make install
+```
 
 ## MCP Client Configuration
 
@@ -78,7 +79,7 @@ If the binary is not in PATH, use the full path:
 {
   "mcpServers": {
     "kubectl-mtv": {
-      "command": "/Users/yourname/.local/bin/kubectl-mtv-mcp",
+      "command": "/path/to/kubectl-mtv-mcp",
       "args": []
     }
   }

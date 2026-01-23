@@ -14,6 +14,23 @@ An MCP server that wraps `kubectl-mtv` commands, allowing AI assistants like Cla
 - **Configure** providers, networks, and storage mappings
 - **Control** migration lifecycle (start, cancel, cutover)
 
+## Available Tools
+
+The MCP server provides three tools for AI assistants:
+
+| Tool | Description |
+|------|-------------|
+| `mtv_read` | Read-only operations: get/describe providers, plans, mappings, inventory |
+| `mtv_write` | Write operations: create/delete/patch providers, plans, mappings |
+| `kubectl_debug` | Debug migrations using kubectl: get pods, logs, events |
+
+### Transparency
+
+When AI assistants use these tools, they show you the exact kubectl commands being executed, so you can:
+- Learn the underlying CLI commands
+- Verify what operations are being performed
+- Run the same commands manually if needed
+
 ## Recommended Installation
 
 The recommended way to use this MCP server is through the [kubectl-mtv](https://github.com/yaacov/kubectl-mtv) CLI tool, which integrates this server and provides a convenient interface.
@@ -50,6 +67,18 @@ Add to your Cursor MCP settings (`~/.cursor/mcp.json`):
 ### Documentation
 
 For complete setup and usage instructions, see the [kubectl-mtv MCP Server Guide](https://github.com/yaacov/kubectl-mtv/blob/main/docs/README_mcp_server.md).
+
+## Example Interactions
+
+Once configured, you can ask your AI assistant things like:
+
+- "What providers and plans do I have in my cluster?"
+- "Show me the VMs available in the vsphere-prod provider"
+- "Create a new migration plan for vm-web-01"
+- "What's the status of my running migrations?"
+- "Check the controller logs for any warnings"
+
+The assistant will execute the appropriate kubectl-mtv commands and show you the results.
 
 ## About kubectl-mtv
 
